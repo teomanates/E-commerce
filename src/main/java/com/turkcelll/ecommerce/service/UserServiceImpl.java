@@ -2,76 +2,68 @@ package com.turkcelll.ecommerce.service;
 
 import com.turkcelll.ecommerce.dto.UserLoginDto;
 import com.turkcelll.ecommerce.dto.UserRegisterDto;
-import com.turkcelll.ecommerce.dto.UserResponseDto;
 import com.turkcelll.ecommerce.entity.User;
 import com.turkcelll.ecommerce.repository.UserRepository;
 import com.turkcelll.ecommerce.rules.UserRules;
-import com.turkcelll.ecommerce.util.JwtUtil;
-import com.turkcelll.ecommerce.util.PasswordUtil;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.apache.catalina.security.SecurityUtil;
+import com.turkcelll.ecommerce.util.SecurityUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-//@NoArgsConstructor  // ????
 public class UserServiceImpl implements UserService {
 
-
     private final UserRepository userRepository;
-    private final SecurityUtil securityUtil; //TODO: util içinde eklencek
-    private final JwtUtil jwtUtil =;  // TODO: util içinde eklencek
-    private final UserRules userRules; //TODO: eklencek
 
-    public UserServiceImpl(UserRepository userRepository) {
+    private final UserRules userRules;
+
+    private final SecurityUtil securityUtil;
+
+    public UserServiceImpl(UserRepository userRepository, UserRules userRules, SecurityUtil securityUtil) {
         this.userRepository = userRepository;
-        this.securityUtil = securityUtil;
-        this.jwtUtil = jwtUtil;
         this.userRules = userRules;
+        this.securityUtil = securityUtil;
     }
+
 
     // TODO: rules icerisinde mailcheck eklenebilir.
     @Override
     public String registerUser(UserRegisterDto userRegisterDto) {
-        userRules.checkEmailExists(userRegisterDto.getEmail());
+
+        if(userRepository.findByEmail(userRegisterDto.getEmail()).isPresent()){
+            throw new RuntimeException("Email Already Exists");
+        }
+
         userRules.validateEmail(userRegisterDto.getEmail());
         userRules.validatePassword(userRegisterDto.getPassword());
 
-        // TODO: exceptionlar rule icine yazilacak
+        String hashedPassword = securityUtil.hashPassword(userRegisterDto.getPassword());
 
-        User user = new User();
-        user.setFirstName(userRegisterDto.getFirstName());
-        user.setLastName(userRegisterDto.getLastName());
-        user.setEmail(userRegisterDto.getEmail());
-        user.setHashedPassword(PasswordUtil.hashPassword(userRegisterDto.getPassword())); // TODO: utils icinde hash oluşturup securtiyUtil.encodePassword ile setlicez.
+        User dbUser = new User();
+        dbUser.setFirstName(userRegisterDto.getFirstName());
+        dbUser.setLastName(userRegisterDto.getLastName());
+        dbUser.setEmail(userRegisterDto.getEmail());
+        dbUser.setPassword(hashedPassword); //
 
-        userRepository.save(user);
-        return "User registered successfully";
-
-        // TODO: return değeri nasil olmali arastir, mapstruct?, mapToUserResponseDto?
-        // void yaptım hoca böyle yapmıştı, map göstermedi
-        // return ?
+        userRepository.save(dbUser); // TODO: return değeri nasil olmali arastir, mapstruct?, mapToUserResponseDto?
+        return "User registered successfully with email: " + dbUser.getEmail();
     }
 
+
+
     @Override
-    public String loginUser(UserLoginDto userLoginDto) {
-        userRules.checkEmailExists(userLoginDto.getEmail());
+    public String loginUser(UserLoginDto userLoginDto) {//
+        userRules.validateEmail(userLoginDto.getEmail());
 
         User dbUser = userRepository
                 .findByEmail(userLoginDto.getEmail())
-                .orElseThrow(() -> new RuntimeException("Invalid email or wrong password.")); // ?????????
-        if(!PasswordUtil.verifyPassword(userLoginDto.getPassword(), dbUser.getHashedPassword())){
+                .orElseThrow(()-> new RuntimeException("Invalid email or password"));
+
+        if(!securityUtil.checkPassword(userLoginDto.getPassword(), dbUser.getPassword())) {
             throw new RuntimeException("Invalid email or password");
         }
 
-        return new JwtUtil().generateToken(user.getEmail());
+        return "Login successful";
 
-        // TODO: exceptionlar rule icine yazilacak
-        // TODO : securityUtil ile pass matchine bakicaz
-        // TODO: token üretmeliyiz ??
-
-        // return tokeni dönmeliyiz
     }
 }

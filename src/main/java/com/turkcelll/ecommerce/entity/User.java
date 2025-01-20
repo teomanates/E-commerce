@@ -1,19 +1,14 @@
 package com.turkcelll.ecommerce.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.time.LocalDate;
+import lombok.*;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 
-@Getter
-@Setter
+
+
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
     @Id
@@ -21,7 +16,7 @@ public class User {
     @Column(name = "user_id")
     private int userId;
 
-    @Column(name = "first_name",nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
@@ -31,15 +26,54 @@ public class User {
     private String email;
 
     @Column(name = "hashed_password")
-    private String hashedPassword;
+    private String password;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private Cart cart; // TODO: cart tarafında bir onetoone iliski yazilmali
+    @PrePersist
+    public void prePersist() {
+        if (createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
 
-    @OneToMany(mappedBy = "users")
-    private List<Order> orders; //TODO: order tarafında manytoone iliski olmali
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+//    @OneToOne
+//    @JoinColumn(name = "user_id")
+//    private Cart cart; // TODO: cart tarafında bir onetoone iliski yazilmali
+//
+//    @OneToMany(mappedBy = "users")
+//    private List<Order> orders; //TODO: order tarafında manytoone iliski olmali
 }

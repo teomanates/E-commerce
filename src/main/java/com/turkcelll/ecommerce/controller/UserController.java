@@ -30,4 +30,6 @@ public class UserController {
 
     }
 
+    // NOT: h2 db ekledim, postmanda deneme yapılabilir geçici bir db kullanıyoruz bu şekilde.
+    // TODO: postgre eklemeliyiz.
 }
