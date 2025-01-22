@@ -3,11 +3,10 @@ package com.turkcelll.ecommerce.controller;
 import com.turkcelll.ecommerce.dto.UserLoginDto;
 import com.turkcelll.ecommerce.dto.UserRegisterDto;
 import com.turkcelll.ecommerce.service.UserService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,18 +17,21 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@RequestBody UserRegisterDto userRegisterDto) {
+    public ResponseEntity<Void> register(@RequestBody @Valid UserRegisterDto userRegisterDto) {
         userService.registerUser(userRegisterDto);
-        return ResponseEntity.ok().build(); // burada ne dönmelyiz, build arastir
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDto userLoginDto) {
+    public ResponseEntity<String> login(@RequestBody @Valid UserLoginDto userLoginDto) {
         String token = userService.loginUser(userLoginDto);
-        return ResponseEntity.ok(token);
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + token).build();
+    }
+
+    @GetMapping("/products/list")
+    public ResponseEntity<Void> getAll(){
+        return ResponseEntity.ok().build();
+    }
 
     }
 
-    // NOT: h2 db ekledim, postmanda deneme yapılabilir geçici bir db kullanıyoruz bu şekilde.
-    // TODO: postgre eklemeliyiz.
-}

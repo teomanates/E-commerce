@@ -25,7 +25,7 @@ public class User {
     @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "hashed_password")
+    @Column(name = "hashed_password", nullable = false)
     private String password;
 
     @Column(name = "created_at")

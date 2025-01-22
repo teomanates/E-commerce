@@ -4,9 +4,12 @@ import com.turkcelll.ecommerce.dto.UserLoginDto;
 import com.turkcelll.ecommerce.dto.UserRegisterDto;
 import com.turkcelll.ecommerce.entity.User;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.Optional;
 
 public interface UserService {
-    String registerUser(UserRegisterDto userRegisterDto); //string mi void mi olmali
+    void registerUser(UserRegisterDto userRegisterDto); //string mi void mi olmali
     String loginUser(UserLoginDto userLoginDto); //loginde optional mı yoksa string mi dönmeli?
-
 }

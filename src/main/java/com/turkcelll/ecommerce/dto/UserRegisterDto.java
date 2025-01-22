@@ -23,7 +23,7 @@ public class UserRegisterDto {
     @NotBlank(message = "Email cannot be blank!")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$",  //TODO: rules icinde tutulmali
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$",
             message = "Password (must be at least 8 characters, contain at least one uppercase letter, one lowercase letter and one number")
     private String password;
 

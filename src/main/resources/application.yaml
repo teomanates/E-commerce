@@ -1,0 +1,19 @@
+spring:
+    application:
+        name: ecommerce
+    datasource:
+        url: jdbc:postgresql://localhost:5432/ecommerce
+        username: postgres
+        password: test
+    jpa:
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+server:
+    port: 8080
+
+jwt:
+    secret: 879c0fa658b5219d94b6677c95ee42e8816c8dde623b1e0dd8713f1a3f35817aa814c3e1beb277db3baf934a0c10b4e0ed976d2a91dcb7e2a5a2400352b5cb6397c9e0b21b4d683cb31851ca2146d17d0e55e8b1aa985da079b157f594ed31189f136a61935dc2cf6c4a6d6afabd6733c9d0d891be82628de352794cf4c6faa64f179434096dbd6c7211d7325e782a48404e14faceeb2260d7e7dc8e1839765168f9d82cfb83ac79a132cc4b4354679c0d3fb6d22358c214068f586e80edc828ac98c966ee690219c7f90856a17738b81cb1901bff91b6c810f592e9674bb90124d89457c72b8f474c16b0ef0736c1cd949074304d2bf9f0dee2ac5ef0b4d41a
