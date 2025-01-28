@@ -7,6 +7,8 @@ import com.turkcelll.ecommerce.entity.Product;
 import com.turkcelll.ecommerce.mapper.ProductMapper;
 import com.turkcelll.ecommerce.repository.CategoryRepository;
 import com.turkcelll.ecommerce.repository.ProductRepository;
+import com.turkcelll.ecommerce.rules.CategoryBusinessRules;
+import com.turkcelll.ecommerce.util.type.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,18 +22,25 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    private final CategoryBusinessRules categoryBusinessRules;
+
+    public ProductServiceImpl(CategoryBusinessRules categoryBusinessRules, CategoryRepository categoryRepository, ProductRepository productRepository) {
+        this.categoryBusinessRules = categoryBusinessRules;
+        this.categoryRepository = categoryRepository;
+        this.productRepository = productRepository;
+    }
+
+
 
     @Override
     public ProductResponseDto addProduct(ProductRequestDto dto) {
-        Product product = ProductMapper.toEntity(dto);
+        categoryBusinessRules.categoryMustExist(dto.getCategoryId());
 
-        if (product.getCategory() == null || product.getCategory().getId() == null) {
-            throw new IllegalArgumentException("Kategori eşleştirilmedi veya geçersiz kategori ID!");
-        }
+        Product product = ProductMapper.toEntity(dto);
 
         // Kategorinin veritabanında mevcut olup olmadığını kontrol et
         Category category = categoryRepository.findById(product.getCategory().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Geçersiz kategori ID!"));
+                .orElse(null);
 
         product.setCategory(category); // Kategoriyi ayarla
 
@@ -42,8 +51,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponseDto updateProduct(Long id, ProductRequestDto dto) {
+        categoryBusinessRules.categoryMustExist(dto.getCategoryId());
+
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Ürün bulunamadı!"));
+                .orElseThrow(() -> new BusinessException("Product not found"));
 
         product.setName(dto.getName());
         product.setDescription(dto.getDescription());
@@ -52,7 +63,7 @@ public class ProductServiceImpl implements ProductService {
 
         // Kategori güncelleme
         Category category = categoryRepository.findById(dto.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Kategori bulunamadı!"));
+                .orElseThrow(null);
         product.setCategory(category);
 
         Product updatedProduct = productRepository.save(product);
@@ -62,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void deleteProduct(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Ürün bulunamadı!"));
+                .orElseThrow(() -> new BusinessException("Product not found"));
         productRepository.delete(product);
     }
 
@@ -77,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponseDto getProductById(Long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Ürün bulunamadı!"));
+                .orElseThrow(() -> new BusinessException("Product not found"));
         return ProductMapper.toDto(product);
     }
 }
