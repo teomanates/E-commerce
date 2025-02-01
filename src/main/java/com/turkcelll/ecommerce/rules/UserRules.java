@@ -11,9 +11,16 @@ public class UserRules {
 
     public UserRules(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+
+    public void checkIfEmailExists(String email) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("Email Already Exists");
         }
 
 
     }
+}
 
 

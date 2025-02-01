@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
-public class OrderServiceImpl  {
+public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;

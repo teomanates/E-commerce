@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 @Service
 public interface OrderService {
-    CreateOrderDto addOrder(CreateOrderDto createOrderDto);
+    //CreateOrderDto addOrder(CreateOrderDto createOrderDto);
         CreateOrderDto createOrder(CreateOrderDto createOrderDto);
         List<CreateOrderDto> getAllOrders();
         CreateOrderDto updateOrderStatus(Long order_id, String status);

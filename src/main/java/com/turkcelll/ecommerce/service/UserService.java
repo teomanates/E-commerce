@@ -10,6 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import java.util.Optional;
 
 public interface UserService {
-    void registerUser(UserRegisterDto userRegisterDto); //string mi void mi olmali
-    String loginUser(UserLoginDto userLoginDto); //loginde optional mı yoksa string mi dönmeli?
+    void registerUser(UserRegisterDto userRegisterDto);
+    String loginUser(UserLoginDto userLoginDto);
 }

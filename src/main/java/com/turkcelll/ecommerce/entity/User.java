@@ -3,7 +3,7 @@ package com.turkcelll.ecommerce.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-
+import java.util.UUID;
 
 
 @Entity
@@ -12,9 +12,9 @@ import java.time.LocalDateTime;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)  // UUID oluşturulacak
     @Column(name = "user_id")
-    private int userId;
+    private UUID userId;
 
     @Column(name = "first_name", nullable = false)
     private String firstName;
@@ -69,6 +69,15 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public UUID getUserId() {
+        return userId;  // Getter metodu ile alıyoruz
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;  // Setter metodu ile set ediyoruz
+    }
+
 
 //    @OneToOne
 //    @JoinColumn(name = "user_id")

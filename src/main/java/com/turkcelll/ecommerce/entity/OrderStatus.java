@@ -11,17 +11,17 @@ public class OrderStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column( name= "order_status_id", unique = true)
-    private Long id;
+    private Long statusId;
 
     @Column(length = 255, nullable = false)
     private String description;
 
     public Long getId() {
-        return id;
+        return statusId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.statusId = statusId;
     }
 
     public String getDescription() {
